@@ -10,8 +10,10 @@ int main(int argc, char const *argv[]) {
     }
 
     char net_name[255];
-    sprintf( net_name, "./net/%s.net", argv[1] );
+    // sprintf( net_name, "./net/%s.net", argv[1] );
+    sprintf( net_name, "%s", argv[1] );
 
+    /*
     fann_type *calc_out;
     fann_type input[2];
 
@@ -20,13 +22,12 @@ int main(int argc, char const *argv[]) {
     input[0] = -1;
     input[1] = 1;
     calc_out = fann_run(ann, input);
-
-
-
     printf(" #%s: (%f,%f) -> %f\n", net_name, input[0], input[1], calc_out[0]);
 
-
-
     fann_destroy(ann);
+    */
+
+    printf(" Make it first , njeeeee ... \n" );
+
     return 0;
 }

@@ -27,13 +27,17 @@ int main(int argc, char const *argv[]) {
 
     // -------------------------------------------------
     if ( argc < 3 ) {
-        printf(" Name of network || Name of train set: missing\n");
-        exit(-1);
+        printf(" Name of network || Name of train set: missing\n\n");
+        printf(" ---------------------------------------------- \n");
+        printf(" Usage: %s network.net train.data \n", argv[0] );
+        printf(" Usage: %s ./nets/net-0.net ./data/data-0.data \n", argv[0] );
+
+        printf("\n"); exit(-1);
 
     }
 
-    sprintf( net_name, "./net/%s.net", argv[1] );
-    sprintf( data_name, "./data/%s.data", argv[2] );
+    sprintf( net_name, "%s", argv[1] );
+    sprintf( data_name, "%s", argv[2] );
 
     ann = fann_create_from_file( net_name );
 

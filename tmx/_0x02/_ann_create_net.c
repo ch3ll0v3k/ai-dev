@@ -12,8 +12,9 @@ int main(int argc, char const *argv[]) {
 
     }
 
-    char new_net_name[255];
-    sprintf( new_net_name, "./net/%s.net", argv[1] );
+    char net_name[255];
+    // sprintf( net_name, "./net/%s.net", argv[1] );
+    sprintf( net_name, "%s", argv[1] );
 
     const unsigned int num_input = 288;
     const unsigned int num_output = 1;
@@ -28,7 +29,7 @@ int main(int argc, char const *argv[]) {
     fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
     fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
     // fann_train_on_file(ann, "xor.data", max_epochs, epochs_between_reports, desired_error);
-    fann_save(ann, new_net_name);
+    fann_save(ann, net_name);
     fann_destroy(ann);
 
     return 0;
