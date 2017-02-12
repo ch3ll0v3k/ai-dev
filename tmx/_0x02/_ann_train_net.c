@@ -72,7 +72,7 @@ void getToMinError() {
     const unsigned int num_layers = 3;
     const unsigned int num_neurons_hidden = 324;
     float desired_error = dest_error; // 0.003; //0.0000001;
-    const unsigned int max_epochs = 5;
+    const unsigned int max_epochs = 20;
     const unsigned int epochs_between_reports = 1;
 
 

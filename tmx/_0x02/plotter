@@ -205,7 +205,7 @@ while True:
     # TKS = [ 0, 5, 10, 15, 20];
     # pylab.xticks( TKS );
     print('pause');
-    plt.pause(0.1)
+    plt.pause(0.25)
 
     C += 1; # TIMEFRAME;
     CUR_ITEMS += 1;
