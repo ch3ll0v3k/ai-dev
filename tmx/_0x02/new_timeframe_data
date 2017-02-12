@@ -1,0 +1,47 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#############################################################################################
+from time import sleep, mktime
+from datetime import datetime
+
+#############################################################################################
+wrong_data_file = 'dev.chart.USD-JPY.1m.csv';
+TIMEFRAME = 60;
+TIMEFRAME_C = 0;
+
+new_CSV = 'new.USD-JPY.'+str(TIMEFRAME)+'m.csv';
+
+
+FSW = open(new_CSV, "w+");
+
+ORIGIN_C = 0;
+NEW_C = 0;
+
+stamp = 0;
+with open(wrong_data_file, 'r') as FS:
+    for line in FS:
+
+        ORIGIN_C += 1;
+
+
+        if( TIMEFRAME_C < TIMEFRAME ):
+            TIMEFRAME_C += 1;
+            continue;
+        else:
+            TIMEFRAME_C = 0;
+
+        line = line.strip();
+        NEW_C += 1;
+
+        FSW.write( line+"\n" );
+        # ---------------------------------
+
+
+#############################################################################################
+print( '\n' );
+print( ('='*72)+'\n' );
+print( 'TTL: ['+str(ORIGIN_C)+'] :> CORRECTED DATA: TTL: ['+str(NEW_C)+']\n' );
+
+FSW.close();
+
+#############################################################################################

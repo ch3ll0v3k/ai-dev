@@ -1,0 +1,276 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#############################################################################################
+from random import random
+import numpy as np
+from struct import unpack
+
+import matplotlib as mpl
+mpl.use('TkAgg') # <-- THIS MAKES IT FAST!
+
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
+import pylab, sys
+from time import sleep
+
+#############################################################################################
+# https://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html#numpy.genfromtxt
+
+# ax = plt.axes()
+# ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+# ax.xaxis.set_minor_locator(ticker.MultipleLocator(1))
+
+plt.subplot( 111 ); 
+
+'''
+# FRAME
+24 * 60 /   5  == 288    # 5  min
+24 * 60 /   10 == 144    # 10 min
+24 * 60 /   15 == 96     # 15 min
+24 * 60 /   30 == 48     # 30 min
+24 * 60 /   60 == 24     # 1  H
+24 * 60 /  240 == 6      # 4  H
+24 * 60 /  720 == 2      # 12 H
+24 * 60 / 1440 == 1      # 1  D
+'''
+FILE_CSV = './new.USD-JPY.1m.csv';
+FILE_CSV = './new.USD-JPY.10m.csv';
+FILE_CSV = './new.USD-JPY.15m.csv';
+FILE_CSV = './new.USD-JPY.30m.csv';
+FILE_CSV = './new.USD-JPY.60m.csv';
+
+
+TIMEFRAME = 1;  # 1440 (cdl) * 1  tfm / 60(min) == 24H
+TIMEFRAME = 10; # 144  (cdl) * 10 tfm / 60(min) == 24H
+TIMEFRAME = 15; # 96   (cdl) * 15 tfm / 60(min) == 24H
+TIMEFRAME = 30; # 48   (cdl) * 30 tfm / 60(min) == 24H
+TIMEFRAME = 60; # 24   (cdl) * 60 tfm / 60(min) == 24H
+
+
+TIMEFRAME = 10; # 144  (cdl) * 10 tfm / 60(min) == 24H
+
+FILE_CSV = './new.USD-JPY.'+str(TIMEFRAME)+'m.csv';
+
+
+A_dX = [];
+
+A_dO = [];
+A_dH = [];
+A_dL = [];
+A_dC = [];
+A_dV = [];
+
+_MAX = 400000;
+# _MAX = 100;
+
+min_y = 10000;
+max_y = 0;
+
+C = 0;
+with open(FILE_CSV, 'r') as FS:
+    for line in FS:
+
+        arr = line.split(',');
+
+        # data.append( ( C, arr[2],arr[3],arr[4],arr[5]) );
+        # data.append( ( arr[5], C) );
+        # A_dX.append( C );
+
+        # arr[0]; == DATE
+        # arr[1]; == TIME
+
+        #A_dO.append( float(arr[2]) );
+        A_dH.append( float(arr[3]) );
+        A_dL.append( float(arr[4]) );
+        A_dC.append( float(arr[5]) );
+
+        if( float(arr[5]) < min_y ): min_y = float(arr[5]);
+        if( float(arr[5]) > max_y ): max_y = float(arr[5]);
+
+
+        C += TIMEFRAME;
+        if C >= _MAX: break;
+
+
+min_y -= 0.2;
+max_y += 0.2;
+
+
+
+# ==========================================================================
+# plt.plot(dX, dH,'r', dL,'g', dC,'b'); #  'b-' (defaul) solid blue line
+plt.plot( 0, 0,'r', 0,'g', 0,'b' ); #  'b-' (defaul) solid blue line
+
+
+print '#1 Backend:',plt.get_backend();
+mng = plt.get_current_fig_manager();
+# mng.resize( *mng.window.maxsize() );
+mng.resize( 1020, 580 );
+
+plt.style.use( 'ggplot' );
+wspace  = 0.1   # the amount of width reserved for blank space between subplots
+hspace  = 0.1   # the amount of height reserved for white space between subplots
+
+plt.subplots_adjust(left=0.05, bottom=0.08, right=0.98, top=0.95, wspace=0.05, hspace=0.05);
+plt.title('H:red, L:green, C:blue ');
+
+# plt.show();
+# -------------------------------
+"""
+# Set x limits
+plt.xlim(-4.0,4.0)
+# Set x ticks
+plt.xticks(np.linspace(-4,4,9,endpoint=True))
+
+# Set y limits
+plt.ylim(-1.0,1.0)
+# Set y ticks
+plt.yticks(np.linspace(-1,1,5,endpoint=True))
+"""
+
+"""
+side_offset = 20;
+X_axStart = 0 - side_offset;
+X_axEnd = _MAX + side_offset;
+Y_axStart = min_y;# 120;
+# <<< DIFF IS THE COMPRESSION HEIGHT OF CHART 
+Y_axEnd = max_y;# 120.5;
+plt.axis([X_axStart, X_axEnd, Y_axStart, Y_axEnd])
+"""
+
+plt.rc('grid', linestyle="--", color='blue');
+plt.grid(False);
+# -------------------------------
+# plt.ylabel('Y-LABEL');
+# plt.xlabel('X-LABEL');
+# plt.xlabel('my data', fontsize=14, color='red')
+
+
+C = 0;
+dX = [];
+dO = [];
+dH = [];
+dL = [];
+dC = [];
+
+'''
+# FRAME
+TIMEFRAME = 1;  # 1440 (cdl) * 1  tfm / 60(min) == 24H
+TIMEFRAME = 10; # 144  (cdl) * 10 tfm / 60(min) == 24H
+TIMEFRAME = 15; # 96   (cdl) * 15 tfm / 60(min) == 24H
+TIMEFRAME = 30; # 48   (cdl) * 30 tfm / 60(min) == 24H
+TIMEFRAME = 60; # 24   (cdl) * 60 tfm / 60(min) == 24H
+'''
+
+CUR_ITEMS = 0;
+MAX_ITEMS = 288; 
+
+# TKS = [ 0 for x in xrange(0, MAX_ITEMS) ];
+
+TTL_ITEMS = len(A_dH);
+TTL_ITEMS_str = str(TTL_ITEMS);
+
+while CUR_ITEMS < MAX_ITEMS -1:
+    
+    # dX.append( A_dX.pop(0) );
+    dX.append( C );
+    # dO.append( A_dO.pop(0) );
+    dH.append( A_dH.pop(0) );
+    dL.append( A_dL.pop(0) );
+    dC.append( A_dC.pop(0) );
+
+    CUR_ITEMS += 1;
+    C += 1;
+
+
+plt.plot(dX, dH,'r', dL,'g', dC,'b');
+
+while True:
+
+    plt.cla(); # clears an axis, i.e. the currently active axis in the current figure. It leaves the other axes untouched.
+    # plt.clf(); # clears the entire current figure with all its axes, but leaves the window opened, such that it may be reused for o
+    # plt.plot(dX, dH,'r', dL,'g', dC,'b');
+    # plt.plot(dX, dC);
+    # pylab.gca().get_xaxis().get_major_formatter().set_useOffset(True);
+
+    plt.plot(dX, dC, 'r-', linewidth=2);
+    plt.plot(dX, dC, 'bo');
+
+    # AVG + plt.plot( dX, dC,'r-', dL,'b-', dH,'g-' , linewidth=2);
+    # AVG + plt.plot( dX, dC,'bo', dL,'b-', dH,'g-' );
+
+  
+
+    # TKS = [ 0, 5, 10, 15, 20];
+    # pylab.xticks( TKS );
+    print('pause');
+    plt.pause(0.1)
+
+    C += 1; # TIMEFRAME;
+    CUR_ITEMS += 1;
+
+
+    print(str(C)+' of '+TTL_ITEMS_str);
+
+    if( len(A_dH) == 0 ):
+        break;
+
+
+    # dX.append( A_dX.pop(0) );
+    # dX.append( C );
+    # dO.append( A_dO.pop(0) );
+    # dH.append( A_dH.pop(0) );
+    dC.append( A_dC.pop(0) );
+    # dL.append( A_dL.pop(0) );
+
+    # -----------------------------
+    """
+    AMX = 0;
+    PERIOD = 24;
+    x = len(dC)-1;
+    _len = len(dC)-1;
+
+    while x > _len-PERIOD:
+        AMX += dC[ x ];
+        x -= 1;
+    dL.append( AMX/PERIOD );
+    """
+
+    # -----------------------------
+    """
+    AMX = 0;
+    PERIOD = 12;
+    x = len(dC)-1;
+    _len = len(dC)-1;
+
+    while x > _len-PERIOD:
+        AMX += dC[ x ];
+        x -= 1;
+    dH.append( AMX/PERIOD );
+    """
+
+    # -----------------------------
+    if( CUR_ITEMS >= MAX_ITEMS ):
+
+        CUR_ITEMS -= 1;
+        # dX.pop(0); 
+        # dO.pop(0); 
+        # dH.pop(0); 
+        # dL.pop(0); 
+        dC.pop(0); 
+
+        """
+        side_offset = 20;
+        X_axStart = 0 - side_offset;
+        X_axEnd = _MAX + side_offset;
+        Y_axStart = min_y;# 120;
+        # <<< DIFF IS THE COMPRESSION HEIGHT OF CHART 
+        Y_axEnd = max_y;# 120.5;
+        plt.axis([X_axStart, X_axEnd, Y_axStart, Y_axEnd])
+        """
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+print( ' END OF DATA: TTL:['+str(C)+']' );
+
+

@@ -1,0 +1,149 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#############################################################################################
+from random import random
+import numpy as np
+from struct import unpack
+
+import matplotlib as mpl
+mpl.use('TkAgg') # <-- THIS MAKES IT FAST!
+
+import matplotlib.pyplot as plt
+import pylab, sys
+#############################################################################################
+# https://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html#numpy.genfromtxt
+
+'''
+# FRAME
+24 * 60 /   5  == 288    # 5  min
+24 * 60 /   10 == 144    # 10 min
+24 * 60 /   15 == 96     # 15 min
+24 * 60 /   30 == 48     # 30 min
+24 * 60 /   60 == 24     # 1  H
+24 * 60 /  240 == 6      # 4  H
+24 * 60 /  720 == 2      # 12 H
+24 * 60 / 1440 == 1      # 1  D
+'''
+
+# 2016.01.03,17:00, 120.172000, 120.205000, 120.171000, 120.205000,0
+FILE_CSV = './hist/'+'HISTDATA_COM_MT_USDJPY_M12016/DAT_MT_USDJPY_M1_2016.csv';
+
+A_dX = [];
+
+A_dO = [];
+A_dH = [];
+A_dL = [];
+A_dC = [];
+A_dV = [];
+
+_MAX = 400000;
+# _MAX = 100;
+_MAX = ;
+
+min_y = 10000;
+max_y = 0;
+
+C = 0;
+with open(FILE_CSV, 'r') as FS:
+    for line in FS:
+
+        arr = line.split(',');
+
+        # data.append( ( C, arr[2],arr[3],arr[4],arr[5]) );
+        # data.append( ( arr[5], C) );
+        A_dX.append( C );
+
+        # arr[0]; == DATE
+        # arr[1]; == TIME
+
+        A_dO.append( float(arr[2]) );
+        A_dH.append( float(arr[3]) );
+        A_dL.append( float(arr[4]) );
+        A_dC.append( float(arr[5]) );
+
+        if( float(arr[2]) < min_y ): min_y = float(arr[2]);
+        if( float(arr[2]) > max_y ): max_y = float(arr[2]);
+
+
+        C += 1;
+        if C >= _MAX: break;
+
+
+min_y -= 0.2;
+max_y += 0.2;
+
+# ==========================================================================
+# red dashes, blue squares and green triangles
+# 'r--', 'bs', 'g^'
+
+# plt.plot( data );
+# plt.plot( data, 'r--' );
+# plt.plot( data, 'bs' );
+# plt.plot( data, 'g^' );
+# plt.show();
+
+# ==========================================================================
+print '#1 Backend:',plt.get_backend();
+mng = plt.get_current_fig_manager();
+# mng.resize( *mng.window.maxsize() );
+mng.resize( 1020, 580 );
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# https://tonysyu.github.io/raw_content/matplotlib-style-gallery/gallery.html
+# plt.style.use('dark_background');
+# plt.style.use( 'bmh' );
+plt.style.use( 'ggplot' );
+# plt.style.use( 'fivethirtyeight' );
+
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# plt.scatter(dX, dY);
+# plt.bar(dX, dY); #  'b-' (defaul) solid blue line
+
+# plt.plot(dX, dO,'g', dH,'r', dL,'g', dC,'b'); #  'b-' (defaul) solid blue line
+plt.plot(dX, dH,'r', dL,'g', dC,'b'); #  'b-' (defaul) solid blue line
+
+# plt.plot(dX, dY, 'r--');  # dashes Vertical
+# plt.plot(dX, dY, 'bs');   # Squares 
+# plt.plot(dX, dY, 'g^');     # Triangles 
+# plt.plot(dX, dY, 'g^');     # Triangles 
+# plt.plot(dX, dY, 'ro');     # red circles 
+
+# axes[1, 2].boxplot(data, labels=labels, showfliers=False)
+# axes[1, 2].set_title('showfliers=False', fontsize=fs)
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+wspace  = 0.1   # the amount of width reserved for blank space between subplots
+hspace  = 0.1   # the amount of height reserved for white space between subplots
+
+plt.subplots_adjust(left=0.05, bottom=0.08, right=0.98, top=0.95, wspace=0.05, hspace=0.05);
+
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+plt.title('H:red, L:green, C:blue ');
+# plt.text(60, .025, 'azd'),
+
+
+side_offset = 20;
+
+X_axStart = 0 - side_offset;
+X_axEnd = _MAX + side_offset;
+
+# plt.xticks([1, 25, 50, 75], ['Q1', 'Q2', 'Q3', 'Q4'])
+# -------------------------------
+Y_axStart = min_y;# 120;
+# <<< DIFF IS THE COMPRESSION HEIGHT OF CHART 
+Y_axEnd = max_y;# 120.5;
+# -------------------------------
+
+plt.axis([X_axStart, X_axEnd, Y_axStart, Y_axEnd])
+plt.grid(True)
+
+plt.ylabel('Y-LABEL');
+# plt.xlabel('X-LABEL');
+plt.xlabel('my data', fontsize=14, color='red')
+
+plt.show();
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# If doubblefann including, this must be set to "-ldoublefann" instead of "-lfann"
+
+gcc -std=gnu99 -O2 _ann_create_net.c -o ann_create_net -lfann -lm
+gcc -std=gnu99 -O2 _ann_asc_net.c -o ann_asc_net -lfann -lm
+gcc -std=gnu99 -O2 _ann_train_net.c -o ann_train_net -lfann -lm
+

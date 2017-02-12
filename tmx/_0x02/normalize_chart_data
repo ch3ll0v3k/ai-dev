@@ -1,0 +1,94 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#############################################################################################
+from time import sleep, mktime
+from datetime import datetime
+
+#############################################################################################
+"""
+2016.01.03,17:00,120.172000,120.205000,120.171000,120.205000,0
+2016.01.03,17:02,120.202000,120.210000,120.202000,120.210000,0
+2016.01.03,17:04,120.212000,120.212000,120.211000,120.211000,0
+"""
+
+wrong_data_file = 'dev.chart.USD-JPY.1m.csv';
+wrong_data_file = 'hist/HISTDATA_COM_MT_USDJPY_M12016/DAT_MT_USDJPY_M1_2016.csv';
+
+TIMEFRAME = 10;
+
+new_CSV = 'new.USD-JPY.'+str(TIMEFRAME)+'.csv';
+
+
+FSW = open(new_CSV, "w+");
+
+ORIGIN_C = 0;
+NEW_C = 0;
+
+C = 0;
+stamp = 0;
+with open(wrong_data_file, 'r') as FS:
+    for line in FS:
+
+        ORIGIN_C += 1;
+
+        line = line.strip();
+        arr = line.split(',');
+
+        # float(arr[2]);
+        # float(arr[3]);
+        # float(arr[4]);
+        # float(arr[5]);
+
+        D = arr[0].split('.'); # 2016.01.03,
+        T = arr[1].split(':'); # 17:00
+
+        Y = int(D[0]);
+        m = int(D[1]);
+        d = int(D[2]);
+
+        H = int(T[0]);
+        i = int(T[1]);
+
+        dt = datetime(Y, m, d, H, i, 0)
+        time_t = int(mktime(dt.timetuple())) / 60;
+
+        C += 1;
+
+        # ---------------------------------
+        if( C == 1 ): 
+            stamp = time_t;
+            continue
+        # ---------------------------------
+        if( (time_t-1 > stamp) and (time_t-10 < stamp) ): # NO MORE > 1 hour, WEEKENDS > == <
+            SCP = 0;
+            while( time_t-1 > stamp ):
+                NEW_C += 1;
+                stamp += 1;
+                SCP += 1;
+                # print('        '+datetime.fromtimestamp(int( stamp * 60)).strftime('%Y.%m.%d,%H:%M')+','+arr[2]+','+arr[3]+','+arr[4]+','+arr[5]+',0');
+                line = datetime.fromtimestamp(int( stamp * 60)).strftime('%Y.%m.%d,%H:%M')+','+arr[2]+','+arr[3]+','+arr[4]+','+arr[5]+',0';
+                FSW.write( line+"\n" );
+
+            
+            # print('[*]     '+datetime.fromtimestamp(int( stamp * 60)).strftime('%Y.%m.%d,%H:%M')+','+arr[2]+','+arr[3]+','+arr[4]+','+arr[5]+',0');
+            stamp += 1;
+            line = datetime.fromtimestamp(int( stamp * 60)).strftime('%Y.%m.%d,%H:%M')+','+arr[2]+','+arr[3]+','+arr[4]+','+arr[5]+',0';
+            FSW.write( line+"\n" );
+
+
+        else:
+            FSW.write( line+"\n" );
+        # print('time_t: ['+str(time_t)+']');
+
+
+        stamp = time_t;
+        # ---------------------------------
+
+#############################################################################################
+print( '\n' );
+print( ('='*72)+'\n' );
+print( 'TTL: ['+str(ORIGIN_C)+'] :> CORRECTED DATA: TTL: ['+str(ORIGIN_C+NEW_C)+']\n' );
+
+FSW.close();
+
+#############################################################################################
