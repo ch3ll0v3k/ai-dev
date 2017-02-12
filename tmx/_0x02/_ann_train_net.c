@@ -87,6 +87,7 @@ void getToMinError() {
     if ( fst ) {
         fann_save(ann, net_name);
         dest_error /= 2;
+        fst = 0;
     } else {
         fst = 1;
     }
