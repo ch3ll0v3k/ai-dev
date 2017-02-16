@@ -1,0 +1,43 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#############################################################################################
+from subprocess import Popen, PIPE, call
+from threading import Timer
+from time import sleep, gmtime
+import sys, os
+
+#############################################################################################
+def EXEC(CMD):
+
+    # ---------------------------------------------------------
+    return Popen( CMD, shell=True, stdout=PIPE ).communicate()[0].replace("\n", "").strip();
+    # ---------------------------------------------------------
+
+# =================================================================
+def LOGGER(DATA):
+
+    # ---------------------------------------------------------
+    t = gmtime();
+    out_file = self.LOG_DIR + str(t.tm_mday)+"-"+str(t.tm_mon)+"-"+str(t.tm_year)+".log";
+    # ---------------------------------------------------------
+
+
+#############################################################################################
+NET_V = 5;
+
+ROOT='/m-sys/prog/AI/AI-C/ai-dev/tmx/_0x02';
+
+while True: 
+
+    print(' =============================================== ');
+    print(' NEW NET: v['+str(NET_V)+'] ');
+
+    # print( EXEC('./ann_create_net ./net/T0.net') );
+    # print( EXEC('./ann_train_net ./net/T0.net ./data/ann.usd-jpy.1m.49k.data') );
+    # print( EXEC('mv net/T0.net net/T0.v._'+str(NET_V)+'_.net') );
+    NET_V += 1;
+ 
+    call( ROOT+'/ann_create_net '+ROOT+'/net/T1_X.net', shell=True );
+    call( ROOT+'/ann_train_net '+ROOT+'/net/T1_X.net '+ROOT+'/data/ann.usd-jpy.1m.49k.data', shell=True );
+    print call('mv '+ROOT+'/net/T1_X.net net/T1_X.v._'+str(NET_V)+'_.net', shell=True );
+   
